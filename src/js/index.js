@@ -1,5 +1,8 @@
 (function() {
   class AngularJS {
+    constructor() {
+      this.directives = [];
+    }
     directive() {
       // write code
     }
