@@ -3,8 +3,8 @@
     constructor() {
       this.directives = [];
     }
-    directive() {
-      // write code
+    directive(name, func) {
+      this.directive.push([name, func]);
     }
     compile() {
       // write code
