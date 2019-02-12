@@ -9,17 +9,15 @@
     }
 
     compile(nodeEl) {
-      const attrs = nodeEl.attributes;
-
-      for (let i = 0; i < attrs.length; i++) {
-        if ((/[ng-]/).test(attrs[i].name)) {
-          const dir = this.directives[attrs[i].name];
+      [].forEach.call(nodeEl.attributes, attr => {
+        if ((/[ng-]/).test(attr.name)) {
+          const dir = this.directives[attr.name];
 
           if (dir) {
             dir(nodeEl);
           }
         }
-      }
+      });
     }
 
     bootstrap(node = '[ng-app]') {
