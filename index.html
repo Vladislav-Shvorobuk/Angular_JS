@@ -6,18 +6,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <link rel="stylesheet" href="./src/css/style.css">
+  <script defer src="./src/js/index.js"></script>
   <title>Angular_JS</title>
 </head>
 
-<body>
-  <div ng-app class="container">
-      <h3>TESTING MY ANGULAR</h3>
-      <input class = 'fistInput' type="text" value="test me">
-      <input class = 'secondInput' type="text" value="">
-      <div ng-show class = 'forTesting'></div>
-  </div>
-
-
-<script src="./src/js/index.js"></script>
+<body ng-app ng-init="name='ivan'">
+    <div ng-show="true" class = 'HI'> HI IVAN !!! <p></p></div>
+    <input ng-model="name"/>
+    <p ng-make-short>qqq qqq qqq qqq qqq qqq qqq</p>
+    <p ng-bind="name"></p>
 </body>
 </html>
