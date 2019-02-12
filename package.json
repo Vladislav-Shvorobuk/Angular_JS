@@ -1,0 +1,23 @@
+{
+  "name": "angular_js",
+  "version": "1.0.0",
+  "description": "attempt to implement some functionality of Angular 1.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint --ext .js src/",
+    "start": "index.html"
+  },
+  "pre-commit": [
+    "lint"
+  ],
+  "author": "Vladislav Shvorobuk",
+  "license": "ISC",
+  "dependencies": {
+    "eslint": "^5.12.1",
+    "eslint-config-airbnb-base": "^12.0.2",
+    "eslint-plugin-import": "^2.7.0",
+    "babel-eslint": "^10.0.1",
+    "pre-commit": "^1.2.2"
+  }
+}
