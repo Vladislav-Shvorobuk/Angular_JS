@@ -17,6 +17,9 @@
         }
       }
 
+      for (const dir in nodeDirectives) {
+        this.directives[dir.name]();
+      }
     }
     bootstrap() {
       // write code
