@@ -32,5 +32,19 @@
     }
   }
 
-  window.angular = new AngularJS();
+
+  function test(el) {
+    // eslint-disable-next-line no-console
+    console.log('called directive ng-show on element', el);
+  }
+
+  const myAngular = new AngularJS();
+  myAngular.directive('ng-init', test);
+  myAngular.directive('ng-show', test);
+  myAngular.directive('ng-model', test);
+  myAngular.directive('ng-make-short', test);
+  myAngular.directive('ng-bind', test);
+  myAngular.bootstrap();
+
+  window.angular = myAngular;
 }());
