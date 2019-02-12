@@ -31,13 +31,9 @@
       const parentNode = document.querySelector(node);
       const childNodes = parentNode.querySelectorAll('*');
       this.compile(parentNode);
-
-      for (let i = 0; i < childNodes.length; i++) {
-        this.compile(childNodes[i]);
-      }
+      childNodes.forEach(node => this.compile(node));
     }
   }
-
 
   function ngInit(el) {
     // eslint-disable-next-line no-console
