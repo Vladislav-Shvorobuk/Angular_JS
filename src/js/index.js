@@ -18,13 +18,19 @@
         }
       }
 
-      for (const dir in nodeDirectives) {
-        this.directives[dir](nodeEl);
+      for (const directive in nodeDirectives) {
+        const dir = this.directives[directive];
+
+        if (dir) {
+          dir(nodeEl);
+        }
       }
     }
-    bootstrap() {
-      const parentNode = document.querySelector('[ng-app]');
-      const childNodes = parentNode.children;
+
+    bootstrap(node = '[ng-app]') {
+      const parentNode = document.querySelector(node);
+      const childNodes = parentNode.querySelectorAll('*');
+      this.compile(parentNode);
 
       for (let i = 0; i < childNodes.length; i++) {
         this.compile(childNodes[i]);
