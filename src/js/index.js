@@ -3,11 +3,12 @@
     constructor() {
       this.directives = {};
     }
+
     directive(name, func) {
-      this.directive[name] = func;
+      this.directives[name] = func;
     }
-    compile(node) {
-      const nodeEl = document.querySelector(node);
+
+    compile(nodeEl) {
       const attrs = nodeEl.attributes;
       const nodeDirectives = {};
 
@@ -18,15 +19,15 @@
       }
 
       for (const dir in nodeDirectives) {
-        this.directives[dir.name]();
+        this.directives[dir](nodeEl);
       }
     }
     bootstrap() {
-      const appNode = document.querySelector('[ng-app]');
-      const [children] = appNode.children;
+      const parentNode = document.querySelector('[ng-app]');
+      const childNodes = parentNode.children;
 
-      for (let i = 0; i < children.length; i++) {
-        this.compile(children[i]);
+      for (let i = 0; i < childNodes.length; i++) {
+        this.compile(childNodes[i]);
       }
     }
   }
