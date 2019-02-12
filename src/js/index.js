@@ -1,13 +1,22 @@
 (function() {
   class AngularJS {
     constructor() {
-      this.directives = [];
+      this.directives = {};
     }
     directive(name, func) {
-      this.directive.push([name, func]);
+      this.directive[name] = func;
     }
-    compile() {
-      // write code
+    compile(node) {
+      const nodeEl = document.querySelector(node);
+      const attrs = nodeEl.attributes;
+      const nodeDirectives = {};
+
+      for (let i = 0; i < attrs.length; i++) {
+        if ((/[ng-]/).test(attrs[i].name)) {
+          nodeDirectives[attrs[i].name] = attrs[i].value;
+        }
+      }
+
     }
     bootstrap() {
       // write code
