@@ -10,19 +10,14 @@
 
     compile(nodeEl) {
       const attrs = nodeEl.attributes;
-      const nodeDirectives = {};
 
       for (let i = 0; i < attrs.length; i++) {
         if ((/[ng-]/).test(attrs[i].name)) {
-          nodeDirectives[attrs[i].name] = attrs[i].value;
-        }
-      }
+          const dir = this.directives[attrs[i].name];
 
-      for (const directive in nodeDirectives) {
-        const dir = this.directives[directive];
-
-        if (dir) {
-          dir(nodeEl);
+          if (dir) {
+            dir(nodeEl);
+          }
         }
       }
     }
