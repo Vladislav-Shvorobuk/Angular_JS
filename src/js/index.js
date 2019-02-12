@@ -22,7 +22,12 @@
       }
     }
     bootstrap() {
-      // write code
+      const appNode = document.querySelector('[ng-app]');
+      const [children] = appNode.children;
+
+      for (let i = 0; i < children.length; i++) {
+        this.compile(children[i]);
+      }
     }
   }
 
