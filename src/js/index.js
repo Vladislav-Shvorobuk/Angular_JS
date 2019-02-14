@@ -5,21 +5,30 @@
     }
 
     directive(name, func) {
+      if (this.directives[name]) {
+        throw Error('This directive has already registered.');
+      }
       this.directives[name] = func;
     }
 
-    compile(nodeEl) {
-      const attr = nodeEl.attributes;
+    compile(node) {
+      const attrs = node.attributes;
+      const dirs = [];
+      const otherAttrs = [];
 
-      for (let i = 0; i < attr.length; i++) {
-        if ((/[ng-]/).test(attr[i].name)) {
-          const dir = this.directives[attr[i].name];
+      for (let i = 0; i < attrs.length; i++) {
+        if ((/[ng-]/).test(attrs[i].name)) {
+          const dir = this.directives[attrs[i].name];
 
           if (dir) {
-            dir(nodeEl);
+            dirs.push(dir);
           }
+        } else {
+          otherAttrs.push(attrs[i]);
         }
       }
+
+      dirs.forEach(dir => dir(node, otherAttrs));
     }
 
     bootstrap(node) {
