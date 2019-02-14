@@ -5,13 +5,13 @@
       this.watchers = [];
       this.rootScope = window;
 
-      this.rootScope.$watch = (name, watcher) => {
-        this.watchers.push({ name, watcher });
-      };
+      // this.rootScope.$watch = (name, watcher) => {
+      //   this.watchers.push({ name, watcher });
+      // };
 
-      this.rootScope.$apply = () => {
-        this.watchers.forEach(({ watcher }) => watcher());
-      };
+      // this.rootScope.$apply = () => {
+      //   this.watchers.forEach(({ watcher }) => watcher());
+      // };
     }
 
     directive(name, func) {
@@ -37,7 +37,7 @@
           otherAttrs.push(attrs[i]);
         }
       }
-      dirs.forEach(dir => dir(this.rootScope, node, otherAttrs, 5));
+      dirs.forEach(dir => dir(this.rootScope, node, otherAttrs));
     }
 
     bootstrap(node) {
@@ -52,19 +52,23 @@
   /*  eslint-disable no-eval */
   function ngInit(scope, node, attrs) {
     const data = eval(node.getAttribute('ng-init'));
-    scope.$watch = (data, () => scope.data);
+    scope.$watch = (name, () => {
+      scope[name] = data;
+    });
   }
 
   function ngShow(scope, node, attrs) {
-    console.log('called directive ng-show on element', scope);
-    console.log('called directive ng-show on element', node);
-    console.log('called directive ng-show on element', attrs);
+    const data = eval(node.getAttribute('ng-show'));
+    node.style.display = data ? 'block' : 'none';
   }
 
   function ngHide(scope, node, attrs) {
-    console.log('called directive ng-show on element', scope);
-    console.log('called directive ng-show on element', node);
-    console.log('called directive ng-show on element', attrs);
+    const data = eval(node.getAttribute('ng-hide'));
+    node.style.display = data ? 'none' : 'block';
+  }
+
+  function ngBind(scope, node, attrs) {
+    node.innerHTML = eval(node.getAttribute('ng-bind'));
   }
 
   // function ngModel(el) {
@@ -83,9 +87,10 @@
   myAngular.directive('ng-init', ngInit);
   myAngular.directive('ng-show', ngShow);
   myAngular.directive('ng-hide', ngHide);
+  myAngular.directive('ng-bind', ngBind);
   // myAngular.directive('ng-model', ngModel);
   // myAngular.directive('ng-make-short', ngMakeShort);
-  // myAngular.directive('ng-bind', ngBind);
+
   myAngular.bootstrap();
 
   window.angular = myAngular;

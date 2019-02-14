@@ -12,6 +12,7 @@ body {
 }
 
 .HI {
+  display: none;
   margin-bottom: 20px;
 }
 
@@ -22,4 +23,8 @@ input {
   color: rgb(71, 70, 70);
   font-size: 21px;
   margin-bottom: 20px;
+}
+
+h2 {
+  display: block;
 }
