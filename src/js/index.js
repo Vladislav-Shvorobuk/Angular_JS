@@ -5,28 +5,30 @@
     }
 
     directive(name, func) {
+      if (this.directives[name]) {
+        throw Error('This directive has already registered.');
+      }
       this.directives[name] = func;
     }
 
-    compile(nodeEl) {
-      const attr = nodeEl.attributes;
+    compile(node) {
+      const attrs = node.attributes;
+      const dirs = [];
+      const otherAttrs = [];
 
-      for (let i = 0; i < attr.length; i++) {
-        if ((/[ng-]/).test(attr[i].name)) {
-          const dir = this.directives[attr[i].name];
-
-          if (dir) {
-            dir(nodeEl);
-          }
-        }
+      for (let i = 0; i < attrs.length; i++) {
+        const dir = this.directives[attrs[i].name];
+        dir ? dirs.push(dir) : otherAttrs.push(attrs[i]);
       }
+
+      dirs.forEach(dir => dir(node, otherAttrs));
     }
 
     bootstrap(node) {
-      const parentNode = node ? node : document.querySelector('[ng-app]');
-      const childNodes = parentNode.querySelectorAll('*');
-      this.compile(parentNode);
-      childNodes.forEach(node => this.compile(node));
+      const baseNode = node || document.querySelector('[ng-app]');
+      const nodes = baseNode.querySelectorAll('*');
+      this.compile(baseNode);
+      nodes.forEach(node => this.compile(node));
     }
   }
 
