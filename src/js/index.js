@@ -17,25 +17,18 @@
       const otherAttrs = [];
 
       for (let i = 0; i < attrs.length; i++) {
-        if ((/[ng-]/).test(attrs[i].name)) {
-          const dir = this.directives[attrs[i].name];
-
-          if (dir) {
-            dirs.push(dir);
-          }
-        } else {
-          otherAttrs.push(attrs[i]);
-        }
+        const dir = this.directives[attrs[i].name];
+        dir ? dirs.push(dir) : otherAttrs.push(attrs[i]);
       }
 
       dirs.forEach(dir => dir(node, otherAttrs));
     }
 
     bootstrap(node) {
-      const parentNode = node ? node : document.querySelector('[ng-app]');
-      const childNodes = parentNode.querySelectorAll('*');
-      this.compile(parentNode);
-      childNodes.forEach(node => this.compile(node));
+      const baseNode = node || document.querySelector('[ng-app]');
+      const nodes = baseNode.querySelectorAll('*');
+      this.compile(baseNode);
+      nodes.forEach(node => this.compile(node));
     }
   }
 
