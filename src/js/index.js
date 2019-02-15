@@ -1,4 +1,10 @@
 (function() {
+  const rootScope = window;
+  const watchers = [];
+
+  rootScope.$watch = watcher => watchers.push(watcher);
+  rootScope.$apply = () => watchers.forEach(watcher => watcher());
+
   class AngularJS {
     constructor() {
       this.directives = {};
@@ -18,10 +24,16 @@
 
       for (let i = 0; i < attrs.length; i++) {
         const dir = this.directives[attrs[i].name];
-        dir ? dirs.push(dir) : otherAttrs.push(attrs[i]);
-      }
 
-      dirs.forEach(dir => dir(node, otherAttrs));
+        if (dir) {
+          dirs.push(dir);
+        }
+
+        if (!(/[ng-]/).test(attrs[i].name)) {
+          otherAttrs.push(attrs[i]);
+        }
+      }
+      dirs.forEach(dir => dir(rootScope, node, otherAttrs));
     }
 
     bootstrap(node) {
@@ -33,33 +45,59 @@
   }
 
   /* eslint-disable no-console */
-  function ngInit(el) {
-    console.log('called directive ng-init on element', el);
+  /*  eslint-disable no-eval */
+  function ngInit(scope, node, attrs) {
+    const data = eval(node.getAttribute('ng-init'));
+    scope[name] = data;
   }
 
-  function ngShow(el) {
-    console.log('called directive ng-show on element', el);
+
+  function ngShow(scope, node, attrs) {
+    const data = node.getAttribute('ng-show');
+    node.style.display = eval(data) ? 'block' : 'none';
+    scope.$watch(() => (node.style.display = eval(data) ? 'block' : 'none'));
   }
 
-  function ngModel(el) {
-    console.log('called directive ng-model on element', el);
+  function ngHide(scope, node, attrs) {
+    const data = node.getAttribute('ng-hide');
+    node.style.display = eval(data) ? 'none' : 'block';
+    scope.$watch(() => (node.style.display = eval(data) ? 'none' : 'block'));
   }
 
-  function ngMakeShort(el) {
-    console.log('called directive ng-make-short on element', el);
+  function ngBind(scope, node, attrs) {
+    const data = node.getAttribute('ng-bind');
+    node.innerHTML = eval(data);
+    scope.$watch(() => (node.innerHTML = eval(data)));
   }
 
-  function ngBind(el) {
-    console.log('called directive ng-bind on element', el);
+  function ngClick(scope, node, attrs) {
+    node.addEventListener('click', () => {
+      const data = node.getAttribute('ng-click');
+      eval(data);
+      scope.$watch(() => eval(data));
+      scope.$apply();
+    });
   }
+
+  // function ngModel(el) {
+  //   console.log('called directive ng-model on element', el);
+  // }
+
+  // function ngMakeShort(el) {
+  //   console.log('called directive ng-make-short on element', el);
+  // }
 
   const myAngular = new AngularJS();
   myAngular.directive('ng-init', ngInit);
   myAngular.directive('ng-show', ngShow);
-  myAngular.directive('ng-model', ngModel);
-  myAngular.directive('ng-make-short', ngMakeShort);
+  myAngular.directive('ng-hide', ngHide);
   myAngular.directive('ng-bind', ngBind);
+  myAngular.directive('ng-click', ngClick);
+  // myAngular.directive('ng-model', ngModel);
+  // myAngular.directive('ng-make-short', ngMakeShort);
+
   myAngular.bootstrap();
 
+  window.watchers = watchers;
   window.angular = myAngular;
 }());

@@ -11,9 +11,13 @@
 </head>
 
 <body ng-app ng-init="name='ivan'">
-    <div ng-show="true" class = 'HI'> HI IVAN !!!</div>
+
+    <p class="bind_text">ng-bind:</p> <p ng-bind="name" class = 'ng_bind'></p>
     <input ng-model="name"/>
-    <p ng-make-short>qqq qqq qqq qqq qqq qqq qqq</p>
-    <p ng-bind="name"></p>
+    <p ng-make-short class="ng_make_short">ng-make-short: qqq qqq qqq qqq qqq qqq qqq</p>
+    <button ng-click = 'name = "vasya"' class = 'ng_click'>name = vasya</button>
+    <button ng-click = 'name = "ivan"' class = 'ng_click'>name = ivan</button>
+    <p ng-hide="name ==='vasya'" class = 'ng_hide'>ng-hide    (false)</p>
+    <p ng-show="name === 'vasya'" class = 'ng_show'>ng-show (true)</p>
 </body>
 </html>
