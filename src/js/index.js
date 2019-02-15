@@ -86,9 +86,24 @@
     });
   }
 
-  // function ngMakeShort(el) {
-  //   console.log('called directive ng-make-short on element', el);
-  // }
+  function ngRepeat(scope, node, attrs) {
+    const data = node.getAttribute('ng-repeat');
+    const parentEl = node.parentNode;
+
+    scope.$watch(() => {
+      const str = eval(data.split(' ')[2]);
+      const nodeList = document.querySelectorAll('[ng-repeat]');
+
+      for (const char of str) {
+        const clonedEl = node.cloneNode(false);
+        clonedEl.innerText = char;
+        parentEl.appendChild(clonedEl);
+      }
+      nodeList.forEach(el => el.remove());
+    });
+
+    scope.$apply();
+  }
 
   const myAngular = new AngularJS();
   myAngular.directive('ng-init', ngInit);
@@ -97,6 +112,7 @@
   myAngular.directive('ng-bind', ngBind);
   myAngular.directive('ng-click', ngClick);
   myAngular.directive('ng-model', ngModel);
+  myAngular.directive('ng-repeat', ngRepeat);
   // myAngular.directive('ng-make-short', ngMakeShort);
 
   myAngular.bootstrap();
