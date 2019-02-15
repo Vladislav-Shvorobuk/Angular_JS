@@ -10,14 +10,15 @@
   <title>Angular_JS</title>
 </head>
 
-<body ng-app ng-init="name='ivan'">
+<body ng-app ng-init="name='ivan'" ng-random-color>
 
     <p class="bind_text">ng-bind:</p> <p ng-bind="name" class = 'ng_bind'></p>
     <input ng-model="name"/>
-    <p ng-make-short class="ng_make_short">ng-make-short: qqq qqq qqq qqq qqq qqq qqq</p>
+    <p ng-make-short length='23' class="ng_make_short">ng-make-short: qqq qqq qqq qqq qqq qqq qqq</p>
     <button ng-click = 'name = "vasya"' class = 'ng_click'>name = vasya</button>
     <button ng-click = 'name = "ivan"' class = 'ng_click'>name = ivan</button>
     <p ng-hide="name ==='vasya'" class = 'ng_hide'>ng-hide    (false)</p>
     <p ng-show="name === 'vasya'" class = 'ng_show'>ng-show (true)</p>
+    <li ng-repeat="letter in name"></li>
 </body>
 </html>
