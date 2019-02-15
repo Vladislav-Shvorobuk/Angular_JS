@@ -1,17 +1,13 @@
 (function() {
+  const rootScope = window;
+  const watchers = [];
+
+  rootScope.$watch = watcher => watchers.push(watcher);
+  rootScope.$apply = () => watchers.forEach(watcher => watcher());
+
   class AngularJS {
     constructor() {
       this.directives = {};
-      this.watchers = [];
-      this.rootScope = window;
-
-      // this.rootScope.$watch = (name, watcher) => {
-      //   this.watchers.push({ name, watcher });
-      // };
-
-      // this.rootScope.$apply = () => {
-      //   this.watchers.forEach(({ watcher }) => watcher());
-      // };
     }
 
     directive(name, func) {
@@ -37,7 +33,7 @@
           otherAttrs.push(attrs[i]);
         }
       }
-      dirs.forEach(dir => dir(this.rootScope, node, otherAttrs));
+      dirs.forEach(dir => dir(rootScope, node, otherAttrs));
     }
 
     bootstrap(node) {
@@ -52,23 +48,35 @@
   /*  eslint-disable no-eval */
   function ngInit(scope, node, attrs) {
     const data = eval(node.getAttribute('ng-init'));
-    scope.$watch = (name, () => {
-      scope[name] = data;
-    });
+    scope[name] = data;
   }
 
+
   function ngShow(scope, node, attrs) {
-    const data = eval(node.getAttribute('ng-show'));
-    node.style.display = data ? 'block' : 'none';
+    const data = node.getAttribute('ng-show');
+    node.style.display = eval(data) ? 'block' : 'none';
+    scope.$watch(() => (node.style.display = eval(data) ? 'block' : 'none'));
   }
 
   function ngHide(scope, node, attrs) {
-    const data = eval(node.getAttribute('ng-hide'));
-    node.style.display = data ? 'none' : 'block';
+    const data = node.getAttribute('ng-hide');
+    node.style.display = eval(data) ? 'none' : 'block';
+    scope.$watch(() => (node.style.display = eval(data) ? 'none' : 'block'));
   }
 
   function ngBind(scope, node, attrs) {
-    node.innerHTML = eval(node.getAttribute('ng-bind'));
+    const data = node.getAttribute('ng-bind');
+    node.innerHTML = eval(data);
+    scope.$watch(() => (node.innerHTML = eval(data)));
+  }
+
+  function ngClick(scope, node, attrs) {
+    node.addEventListener('click', () => {
+      const data = node.getAttribute('ng-click');
+      eval(data);
+      scope.$watch(() => eval(data));
+      scope.$apply();
+    });
   }
 
   // function ngModel(el) {
@@ -79,19 +87,17 @@
   //   console.log('called directive ng-make-short on element', el);
   // }
 
-  // function ngBind(el) {
-  //   console.log('called directive ng-bind on element', el);
-  // }
-
   const myAngular = new AngularJS();
   myAngular.directive('ng-init', ngInit);
   myAngular.directive('ng-show', ngShow);
   myAngular.directive('ng-hide', ngHide);
   myAngular.directive('ng-bind', ngBind);
+  myAngular.directive('ng-click', ngClick);
   // myAngular.directive('ng-model', ngModel);
   // myAngular.directive('ng-make-short', ngMakeShort);
 
   myAngular.bootstrap();
 
+  window.watchers = watchers;
   window.angular = myAngular;
 }());
