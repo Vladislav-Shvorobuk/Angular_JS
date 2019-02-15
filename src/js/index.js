@@ -44,53 +44,60 @@
     }
   }
 
-  /* eslint-disable no-console, no-eval*/
-  function ngInit(scope, node, attrs) {
-    const data = eval(node.getAttribute('ng-init'));
-    scope[name] = data;
+  /* eslint-disable no-eval*/
+  const myAngular = new AngularJS();
+
+  myAngular.directive('ng-init', (scope, node, attrs) => {
+    scope[name] = eval(node.getAttribute('ng-init'));
     scope.$apply();
-  }
+  });
 
+  myAngular.directive('ng-show', (scope, node, attrs) => {
+    function hide() {
+      const data = node.getAttribute('ng-show');
+      node.style.display = eval(data) ? 'block' : 'none';
+    }
+    hide();
+    scope.$watch(hide);
+  });
 
-  function ngShow(scope, node, attrs) {
-    const data = node.getAttribute('ng-show');
-    node.style.display = eval(data) ? 'block' : 'none';
-    scope.$watch(() => (node.style.display = eval(data) ? 'block' : 'none'));
-  }
+  myAngular.directive('ng-hide', (scope, node, attrs) => {
+    function hide() {
+      const data = node.getAttribute('ng-hide');
+      node.style.display = eval(data) ? 'none' : 'block';
+    }
+    hide();
+    scope.$watch(hide);
+  });
 
-  function ngHide(scope, node, attrs) {
-    const data = node.getAttribute('ng-hide');
-    node.style.display = eval(data) ? 'none' : 'block';
-    scope.$watch(() => (node.style.display = eval(data) ? 'none' : 'block'));
-  }
+  myAngular.directive('ng-bind', (scope, node, attrs) => {
+    function bind() {
+      const data = node.getAttribute('ng-bind');
+      node.innerHTML = eval(data);
+    }
+    bind();
+    scope.$watch(bind);
+  });
 
-  function ngBind(scope, node, attrs) {
-    const data = node.getAttribute('ng-bind');
-    node.innerHTML = eval(data);
-    scope.$watch(() => (node.innerHTML = eval(data)));
-  }
-
-  function ngClick(scope, node, attrs) {
+  myAngular.directive('ng-click', (scope, node, attrs) => {
     node.addEventListener('click', () => {
-      const data = node.getAttribute('ng-click');
-      eval(data);
-      scope.$watch(() => eval(data));
+      eval(node.getAttribute('ng-click'));
       scope.$apply();
     });
-  }
+  });
 
-  function ngModel(scope, node, attrs) {
+  myAngular.directive('ng-model', (scope, node, attrs) => {
     node.addEventListener('input', () => {
       eval(`${node.getAttribute('ng-model')} = "${node.value}"`);
       scope.$apply();
     });
-  }
+  });
 
-  function ngRepeat(scope, node, attrs) {
-    const data = node.getAttribute('ng-repeat');
+  myAngular.directive('ng-repeat', (scope, node, attrs) => {
     const parentEl = node.parentNode;
 
-    scope.$watch(() => {
+    function repeat() {
+      const data = node.getAttribute('ng-repeat');
       const str = eval(data.split(' ')[2]);
       const nodeList = document.querySelectorAll('[ng-repeat]');
 
@@ -100,23 +107,28 @@
         parentEl.appendChild(clonedEl);
       }
       nodeList.forEach(el => el.remove());
+    }
+    repeat();
+    scope.$watch(repeat);
+  });
+
+  myAngular.directive('ng-make-short', (scope, node, attrs) => {
+    function makeShort() {
+      const length = node.getAttribute('length');
+      const text = node.innerText;
+      node.innerText = `${text.slice(0, length)}...`;
+    }
+    makeShort();
+    scope.$watch(makeShort);
+  });
+
+  myAngular.directive('ng-random-color', (scope, node, otherAttrs) => {
+    node.addEventListener('input', () => {
+      const createColor = () => Math.random() * 255;
+      node.style.background = `rgb(${createColor()}, ${createColor()}, ${createColor()})`;
     });
-
-    scope.$apply();
-  }
-
-  const myAngular = new AngularJS();
-  myAngular.directive('ng-init', ngInit);
-  myAngular.directive('ng-show', ngShow);
-  myAngular.directive('ng-hide', ngHide);
-  myAngular.directive('ng-bind', ngBind);
-  myAngular.directive('ng-click', ngClick);
-  myAngular.directive('ng-model', ngModel);
-  myAngular.directive('ng-repeat', ngRepeat);
-  // myAngular.directive('ng-make-short', ngMakeShort);
+  });
 
   myAngular.bootstrap();
-
-  window.watchers = watchers;
   window.angular = myAngular;
 }());
