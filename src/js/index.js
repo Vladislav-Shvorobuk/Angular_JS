@@ -44,11 +44,11 @@
     }
   }
 
-  /* eslint-disable no-console */
-  /*  eslint-disable no-eval */
+  /* eslint-disable no-console, no-eval*/
   function ngInit(scope, node, attrs) {
     const data = eval(node.getAttribute('ng-init'));
     scope[name] = data;
+    scope.$apply();
   }
 
 
@@ -79,9 +79,12 @@
     });
   }
 
-  // function ngModel(el) {
-  //   console.log('called directive ng-model on element', el);
-  // }
+  function ngModel(scope, node, attrs) {
+    node.addEventListener('input', () => {
+      eval(`${node.getAttribute('ng-model')} = "${node.value}"`);
+      scope.$apply();
+    });
+  }
 
   // function ngMakeShort(el) {
   //   console.log('called directive ng-make-short on element', el);
@@ -93,7 +96,7 @@
   myAngular.directive('ng-hide', ngHide);
   myAngular.directive('ng-bind', ngBind);
   myAngular.directive('ng-click', ngClick);
-  // myAngular.directive('ng-model', ngModel);
+  myAngular.directive('ng-model', ngModel);
   // myAngular.directive('ng-make-short', ngMakeShort);
 
   myAngular.bootstrap();
