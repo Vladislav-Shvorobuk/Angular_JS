@@ -20,7 +20,7 @@
     compile(node) {
       const attrs = node.attributes;
       const dirs = [];
-      const otherAttrs = [];
+      const otherAttrs = {};
 
       for (let i = 0; i < attrs.length; i++) {
         const dir = this.directives[attrs[i].name];
@@ -29,8 +29,8 @@
           dirs.push(dir);
         }
 
-        if (!(/[ng-]/).test(attrs[i].name)) {
-          otherAttrs.push(attrs[i]);
+        if (!(/ng-/).test(attrs[i].name)) {
+          otherAttrs[attrs[i].name] = attrs[i].nodeValue;
         }
       }
       dirs.forEach(dir => dir(rootScope, node, otherAttrs));
@@ -114,15 +114,15 @@
 
   myAngular.directive('ng-make-short', (scope, node, attrs) => {
     function makeShort() {
-      const length = node.getAttribute('length');
+      const strLength = attrs.length || 20;
       const text = node.innerText;
-      node.innerText = `${text.slice(0, length)}...`;
+      node.innerText = `${text.slice(0, strLength)}...`;
     }
     makeShort();
     scope.$watch(makeShort);
   });
 
-  myAngular.directive('ng-random-color', (scope, node, otherAttrs) => {
+  myAngular.directive('ng-random-color', (scope, node, attrs) => {
     node.addEventListener('input', () => {
       const createColor = () => Math.random() * 255;
       node.style.background = `rgb(${createColor()}, ${createColor()}, ${createColor()})`;
