@@ -2,8 +2,8 @@
   const rootScope = window;
   const watchers = [];
 
-  rootScope.$watch = watcher => watchers.push(watcher);
-  rootScope.$apply = () => watchers.forEach(watcher => watcher());
+  rootScope.$watch = (name, watcher) => watchers.push({ name, watcher });
+  rootScope.$apply = () => watchers.forEach(({ watcher }) => watcher());
 
   class AngularJS {
     constructor() {
@@ -20,7 +20,7 @@
     compile(node) {
       const attrs = node.attributes;
       const dirs = [];
-      const otherAttrs = [];
+      const otherAttrs = {};
 
       for (let i = 0; i < attrs.length; i++) {
         const dir = this.directives[attrs[i].name];
@@ -29,8 +29,8 @@
           dirs.push(dir);
         }
 
-        if (!(/[ng-]/).test(attrs[i].name)) {
-          otherAttrs.push(attrs[i]);
+        if (!(/ng-/).test(attrs[i].name)) {
+          otherAttrs[attrs[i].name] = attrs[i].nodeValue;
         }
       }
       dirs.forEach(dir => dir(rootScope, node, otherAttrs));
@@ -53,30 +53,30 @@
   });
 
   myAngular.directive('ng-show', (scope, node, attrs) => {
+    const data = node.getAttribute('ng-show');
     function hide() {
-      const data = node.getAttribute('ng-show');
       node.style.display = eval(data) ? 'block' : 'none';
     }
     hide();
-    scope.$watch(hide);
+    scope.$watch(data, hide);
   });
 
   myAngular.directive('ng-hide', (scope, node, attrs) => {
+    const data = node.getAttribute('ng-hide');
     function hide() {
-      const data = node.getAttribute('ng-hide');
       node.style.display = eval(data) ? 'none' : 'block';
     }
     hide();
-    scope.$watch(hide);
+    scope.$watch(data, hide);
   });
 
   myAngular.directive('ng-bind', (scope, node, attrs) => {
+    const data = node.getAttribute('ng-bind');
     function bind() {
-      const data = node.getAttribute('ng-bind');
       node.innerHTML = eval(data);
     }
     bind();
-    scope.$watch(bind);
+    scope.$watch(data, bind);
   });
 
   myAngular.directive('ng-click', (scope, node, attrs) => {
@@ -87,17 +87,20 @@
   });
 
   myAngular.directive('ng-model', (scope, node, attrs) => {
+    const data = node.getAttribute('ng-model');
     node.addEventListener('input', () => {
-      eval(`${node.getAttribute('ng-model')} = "${node.value}"`);
+      rootScope[data] = node.value;
       scope.$apply();
     });
+    scope.$watch(data, () => (node.value = eval(`${data}`)));
+    scope.$apply();
   });
 
   myAngular.directive('ng-repeat', (scope, node, attrs) => {
     const parentEl = node.parentNode;
+    const data = node.getAttribute('ng-repeat');
 
     function repeat() {
-      const data = node.getAttribute('ng-repeat');
       const str = eval(data.split(' ')[2]);
       const nodeList = document.querySelectorAll('[ng-repeat]');
 
@@ -109,20 +112,21 @@
       nodeList.forEach(el => el.remove());
     }
     repeat();
-    scope.$watch(repeat);
+    scope.$watch(data, repeat);
   });
 
   myAngular.directive('ng-make-short', (scope, node, attrs) => {
+    const data = node.getAttribute('ng-make-short');
     function makeShort() {
-      const length = node.getAttribute('length');
+      const strLength = attrs.length || 20;
       const text = node.innerText;
-      node.innerText = `${text.slice(0, length)}...`;
+      node.innerText = `${text.slice(0, strLength)}...`;
     }
     makeShort();
-    scope.$watch(makeShort);
+    scope.$watch(data, makeShort);
   });
 
-  myAngular.directive('ng-random-color', (scope, node, otherAttrs) => {
+  myAngular.directive('ng-random-color', (scope, node, attrs) => {
     node.addEventListener('input', () => {
       const createColor = () => Math.random() * 255;
       node.style.background = `rgb(${createColor()}, ${createColor()}, ${createColor()})`;
