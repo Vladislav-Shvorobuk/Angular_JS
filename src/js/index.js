@@ -73,7 +73,7 @@
   myAngular.directive('ng-bind', (scope, node, attrs) => {
     const data = node.getAttribute('ng-bind');
     function bind() {
-      node.innerHTML = eval(data);
+      node.innerText = eval(data);
     }
     bind();
     scope.$watch(data, bind);
