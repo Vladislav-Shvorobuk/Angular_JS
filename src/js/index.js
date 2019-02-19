@@ -55,14 +55,14 @@
     const data = node.getAttribute('ng-show');
     const show = () => (node.style.display = eval(data) ? 'block' : 'none');
     show();
-    scope.$watch(data, show);
+    scope.$watch(eval(data), show);
   });
 
   myAngular.directive('ng-hide', (scope, node, attrs) => {
     const data = node.getAttribute('ng-hide');
     const hide = () => (node.style.display = eval(data) ? 'none' : 'block');
     hide();
-    scope.$watch(node.getAttribute('ng-hide'), hide);
+    scope.$watch(eval(data), hide);
   });
 
   myAngular.directive('ng-bind', (scope, node, attrs) => {
@@ -107,7 +107,7 @@
       nodeList.forEach(el => el.remove());
     }
     repeat();
-    scope.$watch(data, repeat);
+    scope.$watch(eval(data), repeat);
   });
 
   myAngular.directive('ng-make-short', (scope, node, attrs) => {
