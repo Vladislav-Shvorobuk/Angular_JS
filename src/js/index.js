@@ -113,8 +113,8 @@
   myAngular.directive('ng-make-short', (scope, node, attrs) => {
     function makeShort() {
       const strLength = attrs.length || 20;
-      const text = node.innerText;
-      node.innerText = `${text.slice(0, strLength)}...`;
+      const cutString = node.innerText.slice(0, strLength);
+      node.innerText = `${cutString}...`;
     }
     makeShort();
     scope.$watch(attrs.length, makeShort);
