@@ -71,12 +71,10 @@
   });
 
   myAngular.directive('ng-bind', (scope, node, attrs) => {
-    function bind() {
-      const data = node.getAttribute('ng-bind');
-      node.innerText = eval(data);
-    }
+    const data = node.getAttribute('ng-bind');
+    const bind = () => (node.innerText = eval(data));
     bind();
-    scope.$watch(node.getAttribute('ng-bind'), bind);
+    scope.$watch(data, bind);
   });
 
   myAngular.directive('ng-click', (scope, node, attrs) => {
@@ -95,18 +93,18 @@
       scope.$apply();
     });
     setValue();
-    scope.$watch(node.getAttribute('ng-model'), setValue);
+    scope.$watch(data, setValue);
   });
 
   myAngular.directive('ng-repeat', (scope, node, attrs) => {
     const parentEl = node.parentNode;
+    const data = node.getAttribute('ng-repeat').split(' ')[2];
 
     function repeat() {
-      const data = node.getAttribute('ng-repeat');
-      const str = eval(data.split(' ')[2]);
+      const strForReapet = eval(data);
       const nodeList = document.querySelectorAll('[ng-repeat]');
 
-      for (const char of str) {
+      for (const char of strForReapet) {
         const clonedEl = node.cloneNode(false);
         clonedEl.innerText = char;
         parentEl.appendChild(clonedEl);
@@ -114,7 +112,7 @@
       nodeList.forEach(el => el.remove());
     }
     repeat();
-    scope.$watch(node.getAttribute('ng-repeat'), repeat);
+    scope.$watch(data, repeat);
   });
 
   myAngular.directive('ng-make-short', (scope, node, attrs) => {
