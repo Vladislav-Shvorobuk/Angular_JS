@@ -105,10 +105,10 @@
     const data = node.getAttribute('ng-repeat').split(' ')[2];
 
     function repeat() {
-      const strForReapet = eval(data);
-      const nodeList = document.querySelectorAll('[ng-repeat]');
+      const strForRepeat = eval(data);
+      const nodeList = parentEl.querySelectorAll('[ng-repeat]');
 
-      for (const char of strForReapet) {
+      for (const char of strForRepeat) {
         const clonedEl = node.cloneNode(false);
         clonedEl.innerText = char;
         parentEl.appendChild(clonedEl);
