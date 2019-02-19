@@ -49,23 +49,18 @@
 
   myAngular.directive('ng-init', (scope, node, attrs) => {
     eval(node.getAttribute('ng-init'));
-    scope.$apply();
   });
 
   myAngular.directive('ng-show', (scope, node, attrs) => {
-    function hide() {
-      const data = node.getAttribute('ng-show');
-      node.style.display = eval(data) ? 'block' : 'none';
-    }
-    hide();
-    scope.$watch(node.getAttribute('ng-show'), hide);
+    const data = node.getAttribute('ng-show');
+    const show = () => (node.style.display = eval(data) ? 'block' : 'none');
+    show();
+    scope.$watch(data, show);
   });
 
   myAngular.directive('ng-hide', (scope, node, attrs) => {
-    function hide() {
-      const data = node.getAttribute('ng-hide');
-      node.style.display = eval(data) ? 'none' : 'block';
-    }
+    const data = node.getAttribute('ng-hide');
+    const hide = () => (node.style.display = eval(data) ? 'none' : 'block');
     hide();
     scope.$watch(node.getAttribute('ng-hide'), hide);
   });
