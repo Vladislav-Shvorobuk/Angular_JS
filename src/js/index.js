@@ -1,3 +1,5 @@
+/* eslint-disable no-eval*/
+
 (function() {
   const rootScope = window;
   const watchers = [];
@@ -29,7 +31,7 @@
           dirs.push(dir);
         }
 
-        if (!(/ng-/).test(attrs[i].name)) {
+        if (!(/^ng-/).test(attrs[i].name)) {
           otherAttrs[attrs[i].name] = attrs[i].nodeValue;
         }
       }
@@ -44,7 +46,6 @@
     }
   }
 
-  /* eslint-disable no-eval*/
   const myAngular = new AngularJS();
 
   myAngular.directive('ng-init', (scope, node, attrs) => {
@@ -53,21 +54,27 @@
 
   myAngular.directive('ng-show', (scope, node, attrs) => {
     const data = node.getAttribute('ng-show');
-    const show = () => (node.style.display = eval(data) ? 'block' : 'none');
+    const show = () => {
+      node.style.display = eval(data) ? 'block' : 'none';
+    };
     show();
-    scope.$watch(data, show);
+    scope.$watch(eval(data), show);
   });
 
   myAngular.directive('ng-hide', (scope, node, attrs) => {
     const data = node.getAttribute('ng-hide');
-    const hide = () => (node.style.display = eval(data) ? 'none' : 'block');
+    const hide = () => {
+      node.style.display = eval(data) ? 'none' : 'block';
+    };
     hide();
-    scope.$watch(node.getAttribute('ng-hide'), hide);
+    scope.$watch(eval(data), hide);
   });
 
   myAngular.directive('ng-bind', (scope, node, attrs) => {
     const data = node.getAttribute('ng-bind');
-    const bind = () => (node.innerText = eval(data));
+    const bind = () => {
+      node.innerText = eval(data);
+    };
     bind();
     scope.$watch(data, bind);
   });
@@ -81,7 +88,9 @@
 
   myAngular.directive('ng-model', (scope, node, attrs) => {
     const data = node.getAttribute('ng-model');
-    const setValue = () => (node.value = eval(`${data}`));
+    const setValue = () => {
+      node.value = eval(`${data}`);
+    };
 
     node.addEventListener('input', () => {
       rootScope[data] = node.value;
@@ -96,10 +105,10 @@
     const data = node.getAttribute('ng-repeat').split(' ')[2];
 
     function repeat() {
-      const strForReapet = eval(data);
-      const nodeList = document.querySelectorAll('[ng-repeat]');
+      const strForRepeat = eval(data);
+      const nodeList = parentEl.querySelectorAll('[ng-repeat]');
 
-      for (const char of strForReapet) {
+      for (const char of strForRepeat) {
         const clonedEl = node.cloneNode(false);
         clonedEl.innerText = char;
         parentEl.appendChild(clonedEl);
@@ -107,14 +116,14 @@
       nodeList.forEach(el => el.remove());
     }
     repeat();
-    scope.$watch(data, repeat);
+    scope.$watch(eval(data), repeat);
   });
 
   myAngular.directive('ng-make-short', (scope, node, attrs) => {
     function makeShort() {
       const strLength = attrs.length || 20;
-      const text = node.innerText;
-      node.innerText = `${text.slice(0, strLength)}...`;
+      const cutString = node.innerText.slice(0, strLength);
+      node.innerText = `${cutString}...`;
     }
     makeShort();
     scope.$watch(attrs.length, makeShort);
