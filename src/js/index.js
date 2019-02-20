@@ -1,6 +1,6 @@
 /* eslint-disable no-eval*/
 
-(function() {
+(function () {
   const rootScope = window;
   const watchers = [];
 
@@ -25,10 +25,10 @@
       const otherAttrs = {};
 
       for (let i = 0; i < attrs.length; i++) {
-        const dir = this.directives[attrs[i].name];
+        const directive = this.directives[attrs[i].name];
 
-        if (dir) {
-          dirs.push(dir);
+        if (directive) {
+          dirs.push(directive);
         }
 
         if (!(/^ng-/).test(attrs[i].name)) {
@@ -58,16 +58,13 @@
       node.style.display = eval(data) ? 'block' : 'none';
     };
     show();
-    scope.$watch(eval(data), show);
+    scope.$watch(() => eval(data), show);
   });
 
   myAngular.directive('ng-hide', (scope, node, attrs) => {
     const data = node.getAttribute('ng-hide');
-    const hide = () => {
-      node.style.display = eval(data) ? 'none' : 'block';
-    };
-    hide();
-    scope.$watch(eval(data), hide);
+    node.style.display = eval(data) ? 'none' : 'block';
+    scope.$watch(() => eval(data), hide);
   });
 
   myAngular.directive('ng-bind', (scope, node, attrs) => {
@@ -116,7 +113,7 @@
       nodeList.forEach(el => el.remove());
     }
     repeat();
-    scope.$watch(eval(data), repeat);
+    scope.$watch(() => eval(data), repeat);
   });
 
   myAngular.directive('ng-make-short', (scope, node, attrs) => {
